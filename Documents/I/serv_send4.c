@@ -1,13 +1,13 @@
+//popen
+
 #include<netinet/in.h>
 #include<netinet/ip.h>
 #include<netinet/tcp.h>
-#include <sys/socket.h>
+#include<sys/socket.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<arpa/inet.h>
-#include <unistd.h>
-#include<sox.h>
-#include<assert.h>
+#include<unistd.h>
 #define N 1
 int main(int argc,char **argv){
   int ss=socket(PF_INET,SOCK_STREAM,0);
@@ -20,43 +20,43 @@ int main(int argc,char **argv){
   addr.sin_port = htons(atoi(argv[1]));
   addr.sin_addr.s_addr=INADDR_ANY; //accept all IP address
   bind(ss,(struct sockaddr *)&addr,sizeof(addr));
-
+  printf("before listen\n" );
   listen(ss,10);
-
+  printf("after listen\n" );
   struct sockaddr_in client_addr;
   socklen_t len=sizeof(struct sockaddr_in);
   int s=accept(ss,(struct sockaddr *)&client_addr,&len);
+  if (s < 0)
+  {
+      perror("accept failed");
+      exit(1);
+  }
+  printf("accept finish\n" );
+  FILE *pipe;
+  //popen
+  char rec_command[]="rec -t raw -b 16 -c 1 -e s -r 44100 -";
+  if (( pipe = popen(rec_command, "r") )== NULL)
+  {
+    perror("popen");
+    exit(1);
+  }
 
-  //Use libsox
-  size_t size = 48000 * 2 * 5;
-  sox_sample_t * buf = malloc(sizeof(sox_sample_t) * size);
-  sox_init();
-  sox_format_t *ft=sox_open_read("default", 0, 0, "pulseaudio");
-  size_t m = sox_read(ft, buf, size);
-  assert(m == size);
-  sox_close(ft);
-  sox_quit();
   //close(ss);
-//After this same as client_send_recv.c (only send part)
-  short data[N];
+
+  unsigned char temp[2];
   int n;
 
   while(1){
-
-    n=read(0,data,2);  //from console
-
-    if(n==0) break;
-
-
-    n=send(s,data,2,0);  //send
-
+    fgets( temp, 2, pipe ); //from console
+    n=send(s,temp,2,0);  //send
     if(n==-1){
-
       perror("send error");
       exit(1);
     }
-
+    printf("%s\n",temp );
   }
+  pclose(pipe);
   close(s);
+  close(ss);
   return 0;
 }

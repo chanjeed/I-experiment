@@ -24,12 +24,12 @@ int main(int argc,char **argv){
     exit(1);
   }
 
-  unsigned char data[N];
+  short data[N];
   int n;
 
   while(1){
 
-    n=recv(s,data,N,0);
+    n=recv(s,data,2,0);
     if(n==-1){
 
       perror("recv error");
@@ -37,10 +37,10 @@ int main(int argc,char **argv){
     }
     if(n==0) break;
 
-    write(1,data,N);
-  
+    write(1,data,2);
+
   }
   shutdown(s,SHUT_WR);
   //close(s);
-  return 0; 
+  return 0;
 }

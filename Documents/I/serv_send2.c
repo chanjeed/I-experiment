@@ -29,17 +29,17 @@ void *accept_th(char **argv) {
 }
 
 void *read_th() {
-  unsigned char data[N];
+  short data[N];
   int n;
 
   while(1){
 
-    n=read(0,data,N);  //from console
+    n=read(0,data,2);  //from console
 
     if(n==0) break;
 
 
-    n=send(s,data,N,0);  //send
+    n=send(s,data,2,0);  //send
 
     if(n==-1){
 
