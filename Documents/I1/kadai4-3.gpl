@@ -1,2 +1,0 @@
-plot "sin3528.txt" with linespoints, "sin3528.txt" every 10 with linespoints
-pause -1

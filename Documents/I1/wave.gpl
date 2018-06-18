@@ -1,2 +1,0 @@
-plot "wave.txt" with linespoints
-pause -1

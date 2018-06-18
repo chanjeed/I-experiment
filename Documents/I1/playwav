@@ -1,2 +1,0 @@
-#!/bin/bash
-sox -t raw -b 16 -c 2 -e s -r 50000 doremi.wav -d
