@@ -50,7 +50,7 @@ int main(int argc,char **argv){
       //recieve
       n=recv(s,temp,2,0);
       if(n==-1) die("recv error");
-      if(n==0) break;
+      //if(n==0) break;
       fwrite(temp,1,2,pipe_play);
 
         //send
@@ -88,10 +88,10 @@ int main(int argc,char **argv){
       n=recv(s,temp,2,0);
       if(n==-1) die("recv error");
 
-      if(n==0) break;
+      //if(n==0) break;
       fwrite(temp,1,2,pipe_play);
 
-        //send
+      //send
       fread( temp, 1,2, pipe ); // from rec
       n=send(s,temp,2,0);  //send
       if(n==-1) die("send error");
