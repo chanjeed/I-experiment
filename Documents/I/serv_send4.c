@@ -47,13 +47,12 @@ int main(int argc,char **argv){
   int n;
 
   while(1){
-    fgets( temp, 2, pipe ); //from console
+    fread( temp, 1,2, pipe ); //from console
     n=send(s,temp,2,0);  //send
     if(n==-1){
       perror("send error");
       exit(1);
     }
-    printf("%s\n",temp );
   }
   pclose(pipe);
   close(s);
