@@ -34,30 +34,39 @@ int main(int argc,char **argv){
     socklen_t len=sizeof(struct sockaddr_in);
     int s=accept(ss,(struct sockaddr *)&client_addr,&len);
     if (s < 0) die("accept failed");
+
       printf("accept finish\n" );
+
       FILE *pipe;
       FILE *pipe_play;
       //popen
       char rec_command[]="rec -t raw -b 16 -c 1 -e s -r 44100 -";
       if (( pipe = popen(rec_command, "r") )== NULL) die("popen");
+
       char play_command[]="play -t raw -b 16 -c 1 -e s -r 44100 -";
       if (( pipe_play = popen(play_command, "w") )== NULL) die("popen_play");
-
+      printf("before loop\n");
     unsigned char temp[2];
     int n;
 
     while(1){
       //recieve
-      n=recv(s,temp,2,0);
+      printf("loop1\n");
+      n=read(s,temp,2);
+
       if(n==-1) die("recv error");
       //if(n==0) break;
+      printf("recv ok\n");
       fwrite(temp,1,2,pipe_play);
-
-        //send
+      printf("loop2\n");
+      //send
       fread( temp, 1,2, pipe ); // from rec
       n=send(s,temp,2,0);  //send
       if(n==-1) die("send error");
+      printf("loop3\n");
+
     }
+    printf("EEENNNDDD\n");
     pclose(pipe);
     pclose(pipe_play);
     close(s);
@@ -90,12 +99,14 @@ int main(int argc,char **argv){
 
       //if(n==0) break;
       fwrite(temp,1,2,pipe_play);
+      printf("loop\n");
 
       //send
       fread( temp, 1,2, pipe ); // from rec
       n=send(s,temp,2,0);  //send
       if(n==-1) die("send error");
     }
+    printf("EEENNNDDD\n");
     pclose(pipe);
     pclose(pipe_play);
     close(s);
