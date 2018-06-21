@@ -259,7 +259,6 @@ int main(int argc,char **argv){
       //if(n==0) break;
       fwrite(temp,1,N,pipe_play);
 
-
     }
     printf("EEENNNDDD\n");
     pclose(pipe);
