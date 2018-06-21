@@ -132,27 +132,27 @@ void print_complex(FILE * wp,
   }
 }
 
-void bandpass(char buf[]){
+void bandpass(int n,char buf[]){
 
-  complex double * X = calloc(sizeof(complex double), N);
-  complex double * Y = calloc(sizeof(complex double), N);
+  complex double * X = calloc(sizeof(complex double), n);
+  complex double * Y = calloc(sizeof(complex double), n);
     /* 複素数の配列に変換 */
-    sample_to_complex(buf, X, N);
+    sample_to_complex(buf, X, n);
     /* FFT -> Y */
-    fft(X, Y, N);
+    fft(X, Y, n);
 
 
     //TO DO
     int fs=44100;
     int i1,i2;
-    i1=80*N/fs;   // range 85-255
-    i2=300*N/fs;
+    i1=80*n/fs;   // range 85-255
+    i2=300*n/fs;
 
     int i;
-    for (i = 0; i < N/2; i++) {
+    for (i = 0; i < n/2; i++) {
       if(i>i2 || i<i1){
         Y[i]=0+0*_Complex_I;
-        Y[N-i]=0+0*_Complex_I;
+        Y[n-i]=0+0*_Complex_I;
       }
     //  else printf("%f%+fi\n", crealf(Y[i]), cimagf(Y[i]));
     }
@@ -160,9 +160,9 @@ void bandpass(char buf[]){
     //END TO DO
 
     /* IFFT -> Z */
-    ifft(Y, X, N);
+    ifft(Y, X, n);
     /* 標本の配列に変換 */
-    complex_to_sample(X, buf, N);
+    complex_to_sample(X, buf, n);
 
   }
 
@@ -214,9 +214,9 @@ int main(int argc,char **argv){
       fwrite(temp,1,N,pipe_play);
       //printf("loop2\n");
       //send
-      fread( temp, 1,N, pipe ); // from rec
-      bandpass(temp);
-      n=send(s,temp,N,0);  //send
+      n=fread( temp, 1,N, pipe ); // from rec
+      bandpass(n,temp);
+      n=send(s,temp,n,0);  //send
       if(n==-1) die("send error");
 
     }
@@ -248,9 +248,9 @@ int main(int argc,char **argv){
     if (( pipe_play = popen(play_command, "w") )== NULL) die("popen_play");
     while(1){
       //send
-      fread( temp, 1,N, pipe ); // from rec
-      bandpass(temp);
-      n=send(s,temp,N,0);  //send
+      n=fread( temp, 1,N, pipe ); // from rec
+      bandpass(n,temp);
+      n=send(s,temp,n,0);  //send
       if(n==-1) die("send error");
       //recieve
       n=recv(s,temp,N,0);
