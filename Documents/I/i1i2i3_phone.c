@@ -8,7 +8,7 @@
 #include<stdlib.h>
 #include<arpa/inet.h>
 #include<unistd.h>
-#define N 100
+#define N 10
 void die(char* str){
   perror(str);
   exit(1);

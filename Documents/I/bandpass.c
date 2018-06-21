@@ -172,7 +172,7 @@ int main(int argc, char ** argv) {
 
     int i;
     for (i = 0; i < n/2; i++) {
-      if(i<i2 && i>i1){
+      if(i>i2 || i<i1){
         Y[i]=0+0*_Complex_I;
         Y[n-i]=0+0*_Complex_I;
       }
