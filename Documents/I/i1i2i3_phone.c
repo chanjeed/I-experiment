@@ -8,7 +8,7 @@
 #include<stdlib.h>
 #include<arpa/inet.h>
 #include<unistd.h>
-#define N 1
+#define N 100
 void die(char* str){
   perror(str);
   exit(1);
@@ -45,25 +45,24 @@ int main(int argc,char **argv){
 
       char play_command[]="play -t raw -b 16 -c 1 -e s -r 44100 -";
       if (( pipe_play = popen(play_command, "w") )== NULL) die("popen_play");
-      printf("before loop\n");
+      //printf("before loop\n");
     unsigned char temp[2];
     int n;
 
     while(1){
       //recieve
-      printf("loop1\n");
-      n=read(s,temp,2);
+      //printf("loop1\n");
+      n=read(s,temp,N);
 
       if(n==-1) die("recv error");
       //if(n==0) break;
-      printf("recv ok\n");
-      fwrite(temp,1,2,pipe_play);
-      printf("loop2\n");
+      fwrite(temp,1,N,pipe_play);
+      //printf("loop2\n");
       //send
-      fread( temp, 1,2, pipe ); // from rec
-      n=send(s,temp,2,0);  //send
+      fread( temp, 1,N, pipe ); // from rec
+      n=send(s,temp,N,0);  //send
       if(n==-1) die("send error");
-      printf("loop3\n");
+      //printf("loop3\n");
 
     }
     printf("EEENNNDDD\n");
@@ -83,28 +82,28 @@ int main(int argc,char **argv){
     int ret=connect(s,(struct sockaddr *)&addr,sizeof(addr));
     if(ret==-1) die("connect error");
 
-    unsigned char temp[2];
+    unsigned char temp[N];
     int n;
     FILE *pipe;
     FILE *pipe_play;
     //popen
     char rec_command[]="rec -t raw -b 16 -c 1 -e s -r 44100 -";
-    if (( pipe = popen(rec_command, "r") )== NULL) die("popen");
+      if (( pipe = popen(rec_command, "r") )== NULL) die("popen");
     char play_command[]="play -t raw -b 16 -c 1 -e s -r 44100 -";
     if (( pipe_play = popen(play_command, "w") )== NULL) die("popen_play");
     while(1){
+      //send
+      fread( temp, 1,N, pipe ); // from rec
+      n=send(s,temp,N,0);  //send
+      if(n==-1) die("send error");
       //recieve
-      n=recv(s,temp,2,0);
+      n=recv(s,temp,N,0);
       if(n==-1) die("recv error");
 
       //if(n==0) break;
-      fwrite(temp,1,2,pipe_play);
-      printf("loop\n");
+      fwrite(temp,1,N,pipe_play);
 
-      //send
-      fread( temp, 1,2, pipe ); // from rec
-      n=send(s,temp,2,0);  //send
-      if(n==-1) die("send error");
+
     }
     printf("EEENNNDDD\n");
     pclose(pipe);
